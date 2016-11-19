@@ -1,12 +1,5 @@
 <?php
-include 'dbaccess.php'
-?>
-<html>
-<head>
-<title>Пользоветель</title>
-</head>
-<body>
-<?php
+include 'dbaccess.php';
 
 /**
  Четыре действия:
@@ -17,13 +10,11 @@ include 'dbaccess.php'
  */
 
     $action = $_REQUEST["action"];
-    $id = $_REQUEST["id"];
-    $fio = $_REQUEST["fio"];
-    $email = $_REQUEST["email"];
-    $name = $_REQUEST["name"];
-    $password = $_REQUEST["password"];
+    $id = $fio = $email = $name = $password = '';
+    $emailErr = '';
 
     if($action == "edit") { // Редактирование параметров
+        $id = $_REQUEST['id'];
         // TODO: проверить валидность $id;
         $mysqli = get_mysqli();
         $res = $mysqli->query("SELECT * FROM user WHERE id = " . $id);
@@ -36,17 +27,29 @@ include 'dbaccess.php'
         $password = $row['password'];
         $action = "update";
     } else if ($action == "update") {
-        $sql = "UPDATE user SET fio = '" . $fio .
-                          "', email = '" . $email .
-                           "', name = '" . $name .
-                       "', password = '" . $password .
-                "' WHERE id = " . $id;
-        echo "<br/> " . $sql . "<br/>";
-        $mysqli = get_mysqli();
-        if(!$mysqli->query($sql)) {
-           echo("Ошибка обновления параметров пользователя.");
-           error_log("Ошибка обновления параметров пользователя: " .
-                $mysqli->error); 
+        // Получение параметров и валидация.
+        $id = $_REQUEST["id"];
+        $fio = $_REQUEST["fio"];
+        $email = $_REQUEST["email"];
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $emailErr = "Invalid email format";
+        }
+        $name = $_REQUEST["name"];
+        $password = $_REQUEST["password"];
+
+        if(!$emailErr) {
+            $sql = "UPDATE user SET fio = '" . $fio .
+                              "', email = '" . $email .
+                               "', name = '" . $name .
+                           "', password = '" . $password .
+                             "' WHERE id = " . $id;
+            echo "<br/> " . $sql . "<br/>";
+            $mysqli = get_mysqli();
+            if(!$mysqli->query($sql)) {
+               echo("Ошибка обновления параметров пользователя.");
+               error_log("Ошибка обновления параметров пользователя: " .
+                    $mysqli->error); 
+            }
         }
     } else if ($action == "new") {
         $id = '';
@@ -56,21 +59,39 @@ include 'dbaccess.php'
         $password = '';
         $action = "add";
     } else if ($action == "add") {
-        $sql = "INSERT INTO user (fio, email, name, password) " .
-                    "VALUES ('" . $fio .
-                         "', '" . $email .
-                         "', '" . $name .
-                         "', '" . $password .
-                         "')";
-        echo "<br/> " . $sql . "<br/>";
-        $mysqli = get_mysqli();
-        if(!$mysqli->query($sql)) {
-           echo("Ошибка добавления нового пользователя.");
-           error_log("Ошибка добавления нового пользователя: " .
-                $mysqli->error); 
+        // Получение параметров и валидация.
+        $id = $_REQUEST["id"];
+        $fio = $_REQUEST["fio"];
+        $email = $_REQUEST["email"];
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $emailErr = "Invalid email format";
+        }
+        $name = $_REQUEST["name"];
+        $password = $_REQUEST["password"];
+
+        if(!$emailErr) {
+            $sql = "INSERT INTO user (fio, email, name, password) " .
+                        "VALUES ('" . $fio .
+                             "', '" . $email .
+                             "', '" . $name .
+                             "', '" . $password .
+                             "')";
+            echo "<br/> " . $sql . "<br/>";
+            $mysqli = get_mysqli();
+            if(!$mysqli->query($sql)) {
+               echo("Ошибка добавления нового пользователя.");
+               error_log("Ошибка добавления нового пользователя: " .
+                    $mysqli->error); 
+            }
         }
     }
 ?>
+
+<html>
+<head>
+<title>Пользоветель</title>
+</head>
+<body>
 <form action="user.php" method="POST">
 <input type="hidden" name="action" value="<?php echo $action?>">
 <input type="hidden" name="id" value="<?php echo $id ?>">
@@ -79,6 +100,8 @@ include 'dbaccess.php'
 <td><label>Ф.И.О.</label></td><td><input type="text" name="fio" value="<?php echo $fio ?>" ></td>
 </tr><tr>
 <td><label>email</label></td><td><input type="text" name="email" value="<?php echo $email ?>" ></td>
+</tr><tr>
+<td colspan="2"><span class="error"><?php echo $emailErr;?></span></td>
 </tr><tr>
 <td><label>name</label></td><td><input type="text" name="name" value="<?php echo $name ?>" ></td>
 </tr><tr>
