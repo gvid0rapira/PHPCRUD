@@ -1,5 +1,5 @@
 <?php
-include 'dbaccess.php';
+include_once 'User.php';
 
 /**
  Четыре действия:
@@ -10,86 +10,51 @@ include 'dbaccess.php';
  */
 
     $action = $_REQUEST["action"];
-    $id = $fio = $email = $name = $password = '';
+    $user = null;
     $emailErr = '';
 
     if($action == "edit") { // Редактирование параметров
         $id = $_REQUEST['id'];
-        // TODO: проверить валидность $id;
-        $mysqli = get_mysqli();
-        $res = $mysqli->query("SELECT * FROM user WHERE id = " . $id);
-        // TODO: проверить, что результат запроса не пуст. 
-        $res->data_seek(0);
-        $row = $res->fetch_assoc();
-        $fio = $row['fio'];
-        $email = $row['email'];
-        $role = $row['role'];
-        $name = $row['name'];
-        $password = $row['password'];
+        // TODO: обработать ошибки запроса к БД
+        $user = User::findById($id);
         $action = "update";
     } else if ($action == "update") {
         // Получение параметров и валидация.
-        $id = $_REQUEST["id"];
-        $fio = $_REQUEST["fio"];
-        $email = $_REQUEST["email"];
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $emailErr = "Invalid email format";
+        $user = new User();
+        $user->id = $_REQUEST["id"];
+        $user->fio = $_REQUEST["fio"];
+        $user->email = $_REQUEST["email"];
+        if (!filter_var($user->email, FILTER_VALIDATE_EMAIL)) {
+            $emailErr = "неверный формат email";
         }
-        $role = $_REQUEST["role"];
-        $name = $_REQUEST["name"];
-        $password = $_REQUEST["password"];
-
+        $user->role = $_REQUEST["role"];
+        $user->name = $_REQUEST["name"];
+        $user->password = $_REQUEST["password"];
+        
         if(!$emailErr) {
-            $sql = "UPDATE user SET fio = '" . $fio .
-                              "', email = '" . $email .
-                               "', role = '" . $role .
-                               "', name = '" . $name .
-                           "', password = '" . $password .
-                             "' WHERE id = " . $id;
-            // echo "<br/> " . $sql . "<br/>";
-            $mysqli = get_mysqli();
-            if(!$mysqli->query($sql)) {
-               echo("Ошибка обновления параметров пользователя.");
-               error_log("Ошибка обновления параметров пользователя: " .
-                    $mysqli->error); 
-            }
+           $user->save(); 
         }
     } else if ($action == "new") {
-        $id = '';
-        $fio = '';
-        $email = '';
-        $role = '';
-        $name = '';
-        $password = '';
+        $user = new User();
         $action = "add";
     } else if ($action == "add") {
-        // Получение параметров и валидация.
-        $id = $_REQUEST["id"];
-        $fio = $_REQUEST["fio"];
-        $email = $_REQUEST["email"];
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $user = new User();
+        $user->fio = $_REQUEST["fio"];
+        $user->email = $_REQUEST["email"];
+        if (!filter_var($user->email, FILTER_VALIDATE_EMAIL)) {
             $emailErr = "Invalid email format";
         }
-        $name = $_REQUEST["name"];
-        $role = $_REQUEST["role"];
-        $password = $_REQUEST["password"];
+        $user->name = $_REQUEST["name"];
+        $user->role = $_REQUEST["role"];
+        $user->password = $_REQUEST["password"];
 
         if(!$emailErr) {
-            $sql = "INSERT INTO user (fio, email, role, name, password) " .
-                        "VALUES ('" . $fio .
-                             "', '" . $email .
-                             "', '" . $role .
-                             "', '" . $name .
-                             "', '" . $password .
-                             "')";
-            // echo "<br/> " . $sql . "<br/>";
-            $mysqli = get_mysqli();
-            if(!$mysqli->query($sql)) {
-               echo("Ошибка добавления нового пользователя.");
-               error_log("Ошибка добавления нового пользователя: " .
-                    $mysqli->error); 
-            }
+            $user->save();
         }
+    } else {
+        // TODO: Сделать информативную обработку ошибки
+        echo 'Внутренняя ошибка ...';
+        exit(0);
     }
 ?>
 
@@ -105,22 +70,22 @@ include 'dbaccess.php';
 <input type="hidden" name="id" value="<?php echo $id ?>">
 <table>
 <tr>
-<td><label>Ф.И.О.</label></td><td><input type="text" name="fio" value="<?php echo $fio ?>" ></td>
+<td><label>Ф.И.О.</label></td><td><input type="text" name="fio" value="<?php echo $user->fio ?>" ></td>
 </tr><tr>
-<td><label>email</label></td><td><input type="text" name="email" value="<?php echo $email ?>" ></td>
+<td><label>email</label></td><td><input type="text" name="email" value="<?php echo $user->email ?>" ></td>
 </tr><tr>
 <td colspan="2"><span class="error"><?php echo $emailErr;?></span></td>
 </tr><tr>
 <td><label>Роль</label></td><td>
 <select name="role" required>
-<option value="администратор" <?php if($role =='администратор') echo 'selected'?>>администратор</option>
-<option value="пользователь" <?php if($role =='пользователь') echo 'selected'?>>пользователь</option>
+<option value="администратор" <?php if($user->role =='администратор') echo 'selected'?>>администратор</option>
+<option value="пользователь" <?php if($user->role =='пользователь') echo 'selected'?>>пользователь</option>
 </select>
 </td>
 </tr><tr>
-<td><label>name</label></td><td><input type="text" name="name" value="<?php echo $name ?>" ></td>
+<td><label>name</label></td><td><input type="text" name="name" value="<?php echo $user->name ?>" ></td>
 </tr><tr>
-<td><label>password</label></td><td><input type="password" name="password" value="<?php echo $password ?>" ></td>
+<td><label>password</label></td><td><input type="password" name="password" value="<?php echo $user->password ?>" ></td>
 </tr><tr>
 <td colspan="2"><input name="saveBtn" type="submit" value="Сохранить"></td>
 </tr>

@@ -1,20 +1,13 @@
 <?php
-    include 'dbaccess.php';
+    include_once 'User.php';
 
     $action = $_REQUEST['action'];
-    $id = $_REQUEST['id'];
-    $mysqli = get_mysqli();
     if( $action == "delete" ) {
-        $sql = "DELETE FROM user WHERE id = " . $id; 
-        if(!$mysqli->query($sql)) {
-           echo("Ошибка ошибка удаления пользователя.");
-           error_log("Ошибка удаления пользователя: " .
-                $mysqli->error); 
-        }
+        User::deleteById($_REQUEST['id']);
         $action = "";
     }
     
-    $res = $mysqli->query("SELECT * FROM user");
+    $users = User::findAll();
 ?>
 
 <html>
@@ -50,32 +43,29 @@
 <th>name</th>
 <th>password</th>
 </tr>
-<?php
-    for ($row_no = $res->num_rows - 1; $row_no >= 0; $row_no--) {
-        $res->data_seek($row_no);
-        $row = $res->fetch_assoc();?>
+
+<?php foreach($users as $user) { ?>
 <tr>
-<td><input type="radio" name="id" value="<?php echo $row['id'] ?>" >
+<td><input type="radio" name="id" value="<?php echo $user->id ?>" >
 </td>
 <td>
-<?php echo $row['fio'] ?>
+<?php echo $user->fio ?>
 </td>
 <td>
-<?php echo $row['email'] ?>
+<?php echo $user->email ?>
 </td>
 <td>
-<?php echo $row['role'] ?>
+<?php echo $user->role ?>
 </td>
 <td>
-<?php echo $row['name'] ?>
+<?php echo $user->name ?>
 </td>
 <td>
-<?php echo $row['password'] ?>
+<?php echo $user->password ?>
 </td>
 </tr>
-<?php
-    }
-?>
+<?php } ?>
+
 <tr>
 <td colspan="2">
 <button onclick="submitForm('edit', 'user.php')" >Редактировать</button>
