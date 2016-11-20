@@ -23,6 +23,7 @@ include 'dbaccess.php';
         $row = $res->fetch_assoc();
         $fio = $row['fio'];
         $email = $row['email'];
+        $role = $row['role'];
         $name = $row['name'];
         $password = $row['password'];
         $action = "update";
@@ -34,12 +35,14 @@ include 'dbaccess.php';
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $emailErr = "Invalid email format";
         }
+        $role = $_REQUEST["role"];
         $name = $_REQUEST["name"];
         $password = $_REQUEST["password"];
 
         if(!$emailErr) {
             $sql = "UPDATE user SET fio = '" . $fio .
                               "', email = '" . $email .
+                               "', role = '" . $role .
                                "', name = '" . $name .
                            "', password = '" . $password .
                              "' WHERE id = " . $id;
@@ -55,6 +58,7 @@ include 'dbaccess.php';
         $id = '';
         $fio = '';
         $email = '';
+        $role = '';
         $name = '';
         $password = '';
         $action = "add";
@@ -67,12 +71,14 @@ include 'dbaccess.php';
             $emailErr = "Invalid email format";
         }
         $name = $_REQUEST["name"];
+        $role = $_REQUEST["role"];
         $password = $_REQUEST["password"];
 
         if(!$emailErr) {
-            $sql = "INSERT INTO user (fio, email, name, password) " .
+            $sql = "INSERT INTO user (fio, email, role, name, password) " .
                         "VALUES ('" . $fio .
                              "', '" . $email .
+                             "', '" . $role .
                              "', '" . $name .
                              "', '" . $password .
                              "')";
@@ -102,6 +108,13 @@ include 'dbaccess.php';
 <td><label>email</label></td><td><input type="text" name="email" value="<?php echo $email ?>" ></td>
 </tr><tr>
 <td colspan="2"><span class="error"><?php echo $emailErr;?></span></td>
+</tr><tr>
+<td><label>Роль</label></td><td>
+<select name="role" required>
+<option value="администратор" <?php if($role =='администратор') echo 'selected'?>>администратор</option>
+<option value="пользователь" <?php if($role =='пользователь') echo 'selected'?>>пользователь</option>
+</select>
+</td>
 </tr><tr>
 <td><label>name</label></td><td><input type="text" name="name" value="<?php echo $name ?>" ></td>
 </tr><tr>

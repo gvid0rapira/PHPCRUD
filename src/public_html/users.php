@@ -5,6 +5,11 @@ include 'dbaccess.php';
 <head>
 	<title>Пользователи</title>
     <script>
+        /**
+         * parameters:
+         * action - значение параметра запроса "action". 
+         * actor  - значение атрибута "action" формы.
+         */
         function submitForm(action, actor) {
             console.log(action);
             console.log(document.getElementById("actionTxt").value);
@@ -40,6 +45,7 @@ include 'dbaccess.php';
 <th>ID</th>
 <th>ФИО</th>
 <th>email</th>
+<th>Роль</th>
 <th>name</th>
 <th>password</th>
 </tr>
@@ -55,6 +61,9 @@ include 'dbaccess.php';
 </td>
 <td>
 <?php echo $row['email'] ?>
+</td>
+<td>
+<?php echo $row['role'] ?>
 </td>
 <td>
 <?php echo $row['name'] ?>
