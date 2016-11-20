@@ -1,6 +1,22 @@
 <?php
-include 'dbaccess.php';
+    include 'dbaccess.php';
+
+    $action = $_REQUEST['action'];
+    $id = $_REQUEST['id'];
+    $mysqli = get_mysqli();
+    if( $action == "delete" ) {
+        $sql = "DELETE FROM user WHERE id = " . $id; 
+        if(!$mysqli->query($sql)) {
+           echo("Ошибка ошибка удаления пользователя.");
+           error_log("Ошибка удаления пользователя: " .
+                $mysqli->error); 
+        }
+        $action = "";
+    }
+    
+    $res = $mysqli->query("SELECT * FROM user");
 ?>
+
 <html>
 <head>
 	<title>Пользователи</title>
@@ -22,22 +38,7 @@ include 'dbaccess.php';
     </script>
 </head>
 <body>
-<?php  
-    $action = $_REQUEST['action'];
-    $id = $_REQUEST['id'];
-    $mysqli = get_mysqli();
-    if( $action == "delete" ) {
-        $sql = "DELETE FROM user WHERE id = " . $id; 
-        if(!$mysqli->query($sql)) {
-           echo("Ошибка ошибка удаления пользователя.");
-           error_log("Ошибка удаления пользователя: " .
-                $mysqli->error); 
-        }
-        $action = "";
-    }
-    
-    $res = $mysqli->query("SELECT * FROM user");
-?>
+<h2>Список пользователей</h2>
 <form id = "userList" action="user.php" method="POST">
 <input type="hidden" id = "actionTxt" name="action" value="edit">
 <table>

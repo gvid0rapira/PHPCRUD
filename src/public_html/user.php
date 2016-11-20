@@ -46,7 +46,7 @@ include 'dbaccess.php';
                                "', name = '" . $name .
                            "', password = '" . $password .
                              "' WHERE id = " . $id;
-            echo "<br/> " . $sql . "<br/>";
+            // echo "<br/> " . $sql . "<br/>";
             $mysqli = get_mysqli();
             if(!$mysqli->query($sql)) {
                echo("Ошибка обновления параметров пользователя.");
@@ -82,7 +82,7 @@ include 'dbaccess.php';
                              "', '" . $name .
                              "', '" . $password .
                              "')";
-            echo "<br/> " . $sql . "<br/>";
+            // echo "<br/> " . $sql . "<br/>";
             $mysqli = get_mysqli();
             if(!$mysqli->query($sql)) {
                echo("Ошибка добавления нового пользователя.");
@@ -98,6 +98,8 @@ include 'dbaccess.php';
 <title>Пользоветель</title>
 </head>
 <body>
+<a href="users.php">список пользователей</a>
+<h2>Пользователь</h2>
 <form action="user.php" method="POST">
 <input type="hidden" name="action" value="<?php echo $action?>">
 <input type="hidden" name="id" value="<?php echo $id ?>">
