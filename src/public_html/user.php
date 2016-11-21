@@ -8,15 +8,31 @@ include_once 'User.php';
  3. add - сохранение нового пользователя в БД.
  4. update - обновление параметров пользователя в БД.
  */
+    
+    // Аутентификация
+    session_start();
+    if(empty($_SESSION['user'])) {
+        require 'login.php';
+        exit(0);
+    }
 
     $action = $_REQUEST["action"];
     $user = null;
     $emailErr = '';
 
     if($action == "edit") { // Редактирование параметров
+
         $id = $_REQUEST['id'];
         // TODO: обработать ошибки запроса к БД
         $user = User::findById($id);
+        // Если редактирует пользователь, то только свои данные
+        if ($_SESSION['user']->role == 'пользователь') {
+            if (!($_SESSION['user']->name == $user->name)) {
+                $errMsg = 'доступ запрещен';
+                require('error.php');
+                exit(0);
+            }
+        }
         $action = "update";
     } else if ($action == "update") {
         // Получение параметров и валидация.
@@ -53,7 +69,8 @@ include_once 'User.php';
         }
     } else {
         // TODO: Сделать информативную обработку ошибки
-        echo 'Внутренняя ошибка ...';
+        $errMsg =  'Внутренняя ошибка ...';
+        require 'error.php';
         exit(0);
     }
 ?>

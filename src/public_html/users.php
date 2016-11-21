@@ -1,6 +1,13 @@
 <?php
     include_once 'User.php';
 
+    // Аутентификация
+    session_start();
+    if(empty($_SESSION['user'])) {
+        require 'login.php';
+        exit(0);
+    }
+
     $action = $_REQUEST['action'];
     if( $action == "delete" ) {
         User::deleteById($_REQUEST['id']);
@@ -12,6 +19,8 @@
 
 <html>
 <head>
+<?php if (isset($_SESSION['user'])) echo 'Вы вошли как ' . $_SESSION['user']->name;  ?>
+<a href="logout.php"> log out</a>
 	<title>Пользователи</title>
     <script>
         /**
@@ -49,7 +58,8 @@
 <td><input type="radio" name="id" value="<?php echo $user->id ?>" >
 </td>
 <td>
-<?php echo $user->fio ?>
+<a href="userprofile.php?id=<?php echo $user->id ?>">
+<?php echo $user->fio ?></a>
 </td>
 <td>
 <?php echo $user->email ?>
@@ -69,8 +79,10 @@
 <tr>
 <td colspan="2">
 <button onclick="submitForm('edit', 'user.php')" >Редактировать</button>
+<?php if($_SESSION['user']->role == 'администратор') { ?>
 <button onclick="submitForm('new', 'user.php')" >Добавить</button>
 <button onclick="submitForm('delete', 'users.php')" >Удалить</button>
+<?php } ?>
 </td>
 </tr>
 </table>

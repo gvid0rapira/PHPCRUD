@@ -11,20 +11,47 @@ class User {
     public $password = '';
 
     public static function findById($id) {
-        $user = new User();
-        $user->id = $id;
 
         $mysqli = get_mysqli();
         $res = $mysqli->query("SELECT * FROM user WHERE id = " . $id);
+        // TODO: Обработать ошибку запроса
+        if(!$res) return null;
         $res->data_seek(0);
         $row = $res->fetch_assoc();
 
+        $user = new User();
+        $user->id = $id;
         $user->fio = $row['fio'];
         $user->email = $row['email'];
         $user->role = $row['role'];
         $user->name = $row['name'];
         $user->password = $row['password'];
 
+        $res->close();
+        $mysqli->close();
+        return $user;
+    }
+    
+    public static function findByName($name) {
+
+        $mysqli = get_mysqli();
+        $res = $mysqli->query("SELECT * FROM user WHERE name = '" . $name . "'");
+        // TODO: Обработать ошибку запроса
+        if(!$res) return null;
+
+        $res->data_seek(0);
+        $row = $res->fetch_assoc();
+
+        $user = new User();
+        $user->id = $row['id'];
+        $user->fio = $row['fio'];
+        $user->email = $row['email'];
+        $user->role = $row['role'];
+        $user->name = $row['name'];
+        $user->password = $row['password'];
+
+        $res->close();
+        $mysqli->close();
         return $user;
     }
     
