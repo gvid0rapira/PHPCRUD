@@ -55,16 +55,39 @@ class User {
         return $user;
     }
     
-    public static function findAllOrderBy($field = 'fio', $desc = 0) {
+    public static function findallorderby($field = 'fio', $desc = 0) {
         $mysqli = get_mysqli(); 
-        $sql = "SELECT * FROM user ORDER BY " . $field;
-        if($desc) $sql = $sql . " DESC";
+        $sql = "select * from user order by " . $field;
+        if($desc) $sql = $sql . " desc";
         $res = $mysqli->query($sql);
         $users = array();
         for($i = 0; $i < $res->num_rows; $i++) {
             $res->data_seek($i);
             $row = $res->fetch_assoc();
-            $user = new User();
+            $user = new user();
+            $user->id = $row['id'];
+            $user->fio = $row['fio'];
+            $user->email = $row['email'];
+            $user->role = $row['role'];
+            $user->name = $row['name'];
+            $user->password = $row['password'];
+            $users[] = $user;
+        }
+        return $users;
+    }
+
+    /**
+     * $field - имя поля, по которому фильтровать.
+     */
+    public static function filter($field, $val) {
+        $mysqli = get_mysqli(); 
+        $sql = "select * from user where " . $field . " like '" . $val . "'";
+        $res = $mysqli->query($sql);
+        $users = array();
+        for($i = 0; $i < $res->num_rows; $i++) {
+            $res->data_seek($i);
+            $row = $res->fetch_assoc();
+            $user = new user();
             $user->id = $row['id'];
             $user->fio = $row['fio'];
             $user->email = $row['email'];
