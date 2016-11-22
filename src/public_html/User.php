@@ -55,9 +55,11 @@ class User {
         return $user;
     }
     
-    public static function findAll() {
+    public static function findAllOrderBy($field = 'fio', $desc = 0) {
         $mysqli = get_mysqli(); 
-        $res = $mysqli->query("SELECT * FROM user ORDER BY fio");
+        $sql = "SELECT * FROM user ORDER BY " . $field;
+        if($desc) $sql = $sql . " DESC";
+        $res = $mysqli->query($sql);
         $users = array();
         for($i = 0; $i < $res->num_rows; $i++) {
             $res->data_seek($i);

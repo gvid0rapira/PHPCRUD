@@ -1,5 +1,17 @@
 <?php
     include_once 'User.php';
+    
+    /**
+     * Параметры запроса:
+     * action - операция. Значения:
+     *   1 не задано - отображение списка.
+     *   2 delete - удаление указанного пользователя и отображение списка.
+     * id - id пользователя, с которым проводится затребованная операция.
+     * orderby - имя параметра пользователя, по которому будет сортироваться
+     *           список сотрудников.
+     * desc - обратное направление сортировки. Если значение установлено в 1цу,
+     *        то список сортируется по заданному полю в обратном направлении. 
+     */
 
     // Аутентификация
     session_start();
@@ -13,8 +25,23 @@
         User::deleteById($_REQUEST['id']);
         $action = "";
     }
-    
-    $users = User::findAll();
+    $fioOrderBy = 'fio0';
+    $roleOrderBy = 'role0';
+    $nameOrderBy = 'name0';
+    if (!empty($_REQUEST['orderby'])) {
+        $field = substr($_REQUEST['orderby'], 0, strlen($_REQUEST['orderby']) - 1);
+        $desc = 0 + substr($_REQUEST['orderby'], -1);
+        $users = User::findAllOrderBy($field, $desc);
+        if ($field == 'fio') {
+            $fioOrderBy = $field . ($desc ^ 1);
+        } else if ($field == 'role') {
+            $roleOrderBy = $field . ($desc ^ 1);
+        } else if ($field == 'name') {
+            $nameOrderBy = $field . ($desc ^ 1);
+        }
+    } else {
+        $users = User::findAllOrderBy('fio');
+    }
 ?>
 
 <html>
@@ -28,11 +55,9 @@
          * action - значение параметра запроса "action". 
          * actor  - значение атрибута "action" формы.
          */
-        function submitForm(action, actor) {
-            console.log(action);
-            console.log(document.getElementById("actionTxt").value);
-            document.getElementById("actionTxt").value = action;
-            console.log(document.getElementById("actionTxt").value);
+        function submitForm(action, actor, orderby) {
+            document.getElementById("actionHid").value = action;
+            document.getElementById("orderByHid").value = orderby;
             var form = document.getElementById("userList"); 
             form.action = actor;
             form.submit();
@@ -42,14 +67,21 @@
 <body>
 <h2>Список пользователей</h2>
 <form id = "userList" action="user.php" method="POST">
-<input type="hidden" id = "actionTxt" name="action" value="edit">
+<input type="hidden" id = "actionHid" name="action" value="edit">
+<input type="hidden" id = "orderByHid" name="orderby" value="">
 <table>
 <tr>
 <th>ID</th>
-<th>ФИО</th>
+<th><button 
+    onclick="submitForm('', 'users.php', '<?php echo $fioOrderBy ?>')" >
+    Ф.И.О.</button></th>
 <th>email</th>
-<th>Роль</th>
-<th>name</th>
+<th><button 
+    onclick="submitForm('', 'users.php', '<?php echo $roleOrderBy ?>')" >
+    Роль</button></th>
+<th><button 
+    onclick="submitForm('', 'users.php', '<?php echo $nameOrderBy ?>')" >
+    name</button></th>
 <th>password</th>
 </tr>
 
@@ -78,10 +110,10 @@
 
 <tr>
 <td colspan="2">
-<button onclick="submitForm('edit', 'user.php')" >Редактировать</button>
+<button onclick="submitForm('edit', 'user.php', '')" >Редактировать</button>
 <?php if($_SESSION['user']->role == 'администратор') { ?>
-<button onclick="submitForm('new', 'user.php')" >Добавить</button>
-<button onclick="submitForm('delete', 'users.php')" >Удалить</button>
+<button onclick="submitForm('new', 'user.php', '')" >Добавить</button>
+<button onclick="submitForm('delete', 'users.php', '')" >Удалить</button>
 <?php } ?>
 </td>
 </tr>
