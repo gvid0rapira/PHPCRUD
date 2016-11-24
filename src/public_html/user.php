@@ -16,13 +16,13 @@ include_once 'User.php';
         exit(0);
     }
 
-    $action = $_REQUEST["action"];
+    $action = strip_tags( $_REQUEST["action"] );
     $user = null;
     $emailErr = '';
 
     if($action == "edit") { // Редактирование параметров
 
-        $id = $_REQUEST['id'];
+        $id = strip_tags( $_REQUEST['id'] );
         // TODO: обработать ошибки запроса к БД
         $user = User::findById($id);
         // Если редактирует пользователь, то только свои данные
@@ -37,15 +37,15 @@ include_once 'User.php';
     } else if ($action == "update") {
         // Получение параметров и валидация.
         $user = new User();
-        $user->id = $_REQUEST["id"];
-        $user->fio = $_REQUEST["fio"];
-        $user->email = $_REQUEST["email"];
+        $user->id = strip_tags( $_REQUEST["id"] );
+        $user->fio = strip_tags( $_REQUEST["fio"] );
+        $user->email = strip_tags( $_REQUEST["email"] );
         if (!filter_var($user->email, FILTER_VALIDATE_EMAIL)) {
             $emailErr = "неверный формат email";
         }
-        $user->role = $_REQUEST["role"];
-        $user->name = $_REQUEST["name"];
-        $user->password = $_REQUEST["password"];
+        $user->role = strip_tags( $_REQUEST["role"] );
+        $user->name = strip_tags( $_REQUEST["name"] );
+        $user->password = strip_tags( $_REQUEST["password"] );
         
         if(!$emailErr) {
            $user->save(); 
@@ -55,14 +55,14 @@ include_once 'User.php';
         $action = "add";
     } else if ($action == "add") {
         $user = new User();
-        $user->fio = $_REQUEST["fio"];
-        $user->email = $_REQUEST["email"];
+        $user->fio = strip_tags( $_REQUEST["fio"] );
+        $user->email = strip_tags( $_REQUEST["email"] );
         if (!filter_var($user->email, FILTER_VALIDATE_EMAIL)) {
             $emailErr = "Invalid email format";
         }
-        $user->name = $_REQUEST["name"];
-        $user->role = $_REQUEST["role"];
-        $user->password = $_REQUEST["password"];
+        $user->name = strip_tags( $_REQUEST["name"] );
+        $user->role = strip_tags( $_REQUEST["role"] );
+        $user->password = strip_tags( $_REQUEST["password"] );
 
         if(!$emailErr) {
             $user->save();
@@ -84,15 +84,15 @@ include_once 'User.php';
 <a href="users.php">список пользователей</a>
 <h2>Пользователь</h2>
 <form action="user.php" method="POST">
-<input type="hidden" name="action" value="<?php echo $action?>">
-<input type="hidden" name="id" value="<?php echo $id ?>">
+<input type="hidden" name="action" value="<?php echo htmlentities( $action ) ?>">
+<input type="hidden" name="id" value="<?php echo htmlentities( $id ) ?>">
 <table>
 <tr>
-<td><label>Ф.И.О.</label></td><td><input type="text" name="fio" value="<?php echo $user->fio ?>" ></td>
+<td><label>Ф.И.О.</label></td><td><input type="text" name="fio" value="<?php echo htmlentities( $user->fio ) ?>" ></td>
 </tr><tr>
-<td><label>email</label></td><td><input type="text" name="email" value="<?php echo $user->email ?>" ></td>
+<td><label>email</label></td><td><input type="text" name="email" value="<?php echo htmlentities( $user->email ) ?>" ></td>
 </tr><tr>
-<td colspan="2"><span class="error"><?php echo $emailErr;?></span></td>
+<td colspan="2"><span class="error"><?php echo htmlentities( $emailErr );?></span></td>
 </tr><tr>
 <td><label>Роль</label></td><td>
 <select name="role" required>
@@ -101,9 +101,9 @@ include_once 'User.php';
 </select>
 </td>
 </tr><tr>
-<td><label>name</label></td><td><input type="text" name="name" value="<?php echo $user->name ?>" ></td>
+<td><label>name</label></td><td><input type="text" name="name" value="<?php echo htmlentities( $user->name ) ?>" ></td>
 </tr><tr>
-<td><label>password</label></td><td><input type="password" name="password" value="<?php echo $user->password ?>" ></td>
+<td><label>password</label></td><td><input type="password" name="password" value="<?php echo htmlentities( $user->password ) ?>" ></td>
 </tr><tr>
 <td colspan="2"><input name="saveBtn" type="submit" value="Сохранить"></td>
 </tr>

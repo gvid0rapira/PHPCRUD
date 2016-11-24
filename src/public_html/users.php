@@ -31,19 +31,19 @@
     $roleOrderBy = 'role0';
     $nameOrderBy = 'name0';
     
-    $action = $_REQUEST['action'];
+    $action = strip_tags( $_REQUEST['action'] );
     if( $action == "delete" ) { //---------------------: Удаление
-        User::deleteById($_REQUEST['id']);
+        User::deleteById( $strip_tags( _REQUEST['id'] ));
         $users = User::findAllOrderBy('fio');
     } else if( $action == "filter" ) { //--------------: Фильтрация
         $filter_val = '';
-        $filter_fld = $_REQUEST['filter_fld'];
+        $filter_fld = strip_tags( $_REQUEST['filter_fld'] );
         if( $filter_fld == 'fio') {
-            $filter_val = $_REQUEST['fio_filter'] . "%";
+            $filter_val = strip_tags( $_REQUEST['fio_filter'] ) . "%";
         } else if ( $filter_fld == 'role') {
-            $filter_val = $_REQUEST['role_filter'] . "%";
+            $filter_val = strip_tags( $_REQUEST['role_filter'] ) . "%";
         } else if ( $filter_fld == 'name') {
-            $filter_val = $_REQUEST['name_filter'] . "%";
+            $filter_val = strip_tags( $_REQUEST['name_filter'] ) . "%";
         } else {
             // Неизвестное имя поля. Выдать весь список.
             $filter_fld = '';
@@ -55,7 +55,7 @@
         }
     } else if( $action == "sort" ) { //----------------: Сортировка
         
-        $field = substr($_REQUEST['orderby'], 0, strlen($_REQUEST['orderby']) - 1);
+        $field = substr($_REQUEST['orderby'], 0, strlen(strip_tags( $_REQUEST['orderby'] )) - 1);
         $desc = 0 + substr($_REQUEST['orderby'], -1);
         $users = User::findAllOrderBy($field, $desc);
         if ($field == 'fio') {
@@ -110,16 +110,16 @@
 <tr>
 <th>ID</th>
 <th><button 
-    onclick="submitForm('sort', 'users.php', '<?php echo $fioOrderBy ?>')" >
+    onclick="submitForm('sort', 'users.php', '<?php echo htmlentities( $fioOrderBy ) ?>')" >
     Ф.И.О.</button><input type="text" name="fio_filter" style="width: 80px" >
     <button onclick="submitFilter('fio')">F</button></th>
 <th>email</th>
 <th><button 
-    onclick="submitForm('sort', 'users.php', '<?php echo $roleOrderBy ?>')" >
+    onclick="submitForm('sort', 'users.php', '<?php echo htmlentities( $roleOrderBy ) ?>')" >
     Роль</button><input type="text" name="role_filter" style="width: 80px" >
     <button onclick="submitFilter('role')">F</button></th>
 <th><button 
-    onclick="submitForm('sort', 'users.php', '<?php echo $nameOrderBy ?>')" >
+    onclick="submitForm('sort', 'users.php', '<?php echo htmlentities( $nameOrderBy ) ?>')" >
     name</button><input type="text" name="name_filter" style="width: 80px" >
     <button onclick="submitFilter('name')">F</button></th>
 <th>password</th>
@@ -127,23 +127,23 @@
 
 <?php foreach($users as $user) { ?>
 <tr>
-<td><input type="radio" name="id" value="<?php echo $user->id ?>" >
+<td><input type="radio" name="id" value="<?php echo htmlentities( $user->id ) ?>" >
 </td>
 <td>
-<a href="userprofile.php?id=<?php echo $user->id ?>">
-<?php echo $user->fio ?></a>
+<a href="userprofile.php?id=<?php echo htmlentities( $user->id ) ?>">
+<?php echo htmlentities( $user->fio ) ?></a>
 </td>
 <td>
-<?php echo $user->email ?>
+<?php echo htmlentities( $user->email ) ?>
 </td>
 <td>
-<?php echo $user->role ?>
+<?php echo htmlentities( $user->role ) ?>
 </td>
 <td>
-<?php echo $user->name ?>
+<?php echo htmlentities( $user->name ) ?>
 </td>
 <td>
-<?php echo $user->password ?>
+<?php echo htmlentities( $user->password ) ?>
 </td>
 </tr>
 <?php } ?>
