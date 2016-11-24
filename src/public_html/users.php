@@ -33,17 +33,17 @@
     
     $action = strip_tags( $_REQUEST['action'] );
     if( $action == "delete" ) { //---------------------: Удаление
-        User::deleteById( $strip_tags( _REQUEST['id'] ));
+        User::deleteById( strip_tags( $_POST['id'] ));
         $users = User::findAllOrderBy('fio');
     } else if( $action == "filter" ) { //--------------: Фильтрация
         $filter_val = '';
-        $filter_fld = strip_tags( $_REQUEST['filter_fld'] );
+        $filter_fld = strip_tags( $_GET['filter_fld'] );
         if( $filter_fld == 'fio') {
-            $filter_val = strip_tags( $_REQUEST['fio_filter'] ) . "%";
+            $filter_val = strip_tags( $_GET['fio_filter'] ) . "%";
         } else if ( $filter_fld == 'role') {
-            $filter_val = strip_tags( $_REQUEST['role_filter'] ) . "%";
+            $filter_val = strip_tags( $_GET['role_filter'] ) . "%";
         } else if ( $filter_fld == 'name') {
-            $filter_val = strip_tags( $_REQUEST['name_filter'] ) . "%";
+            $filter_val = strip_tags( $_GET['name_filter'] ) . "%";
         } else {
             // Неизвестное имя поля. Выдать весь список.
             $filter_fld = '';
@@ -55,8 +55,9 @@
         }
     } else if( $action == "sort" ) { //----------------: Сортировка
         
-        $field = substr($_REQUEST['orderby'], 0, strlen(strip_tags( $_REQUEST['orderby'] )) - 1);
-        $desc = 0 + substr($_REQUEST['orderby'], -1);
+        $orderby = strip_tags( $_GET['orderby'] );
+        $field = substr($orderby, 0, strlen($orderby) - 1);
+        $desc = 0 + substr($orderby, -1);
         $users = User::findAllOrderBy($field, $desc);
         if ($field == 'fio') {
             $fioOrderBy = $field . ($desc ^ 1);
@@ -81,11 +82,12 @@
      * action - значение параметра запроса "action". 
      * actor  - значение атрибута "action" формы.
      */
-    function submitForm(action, actor, orderby) {
+    function submitForm(action, actor, method, orderby) {
         document.getElementById("actionHid").value = action;
         document.getElementById("orderByHid").value = orderby;
         var form = document.getElementById("userList"); 
         form.action = actor;
+        form.method = method;
         form.submit();
     }
 
@@ -110,16 +112,16 @@
 <tr>
 <th>ID</th>
 <th><button 
-    onclick="submitForm('sort', 'users.php', '<?php echo htmlentities( $fioOrderBy ) ?>')" >
+    onclick="submitForm('sort', 'users.php', 'GET', '<?php echo htmlentities( $fioOrderBy ) ?>')" >
     Ф.И.О.</button><input type="text" name="fio_filter" style="width: 80px" >
     <button onclick="submitFilter('fio')">F</button></th>
 <th>email</th>
 <th><button 
-    onclick="submitForm('sort', 'users.php', '<?php echo htmlentities( $roleOrderBy ) ?>')" >
+    onclick="submitForm('sort', 'users.php', 'GET', '<?php echo htmlentities( $roleOrderBy ) ?>')" >
     Роль</button><input type="text" name="role_filter" style="width: 80px" >
     <button onclick="submitFilter('role')">F</button></th>
 <th><button 
-    onclick="submitForm('sort', 'users.php', '<?php echo htmlentities( $nameOrderBy ) ?>')" >
+    onclick="submitForm('sort', 'users.php', 'GET', '<?php echo htmlentities( $nameOrderBy ) ?>')" >
     name</button><input type="text" name="name_filter" style="width: 80px" >
     <button onclick="submitFilter('name')">F</button></th>
 <th>password</th>
@@ -150,10 +152,10 @@
 
 <tr>
 <td colspan="2">
-<button onclick="submitForm('edit', 'user.php', '')" >Редактировать</button>
+<button onclick="submitForm('edit', 'user.php', 'POST', '')" >Редактировать</button>
 <?php if($_SESSION['user']->role == 'администратор') { ?>
-<button onclick="submitForm('new', 'user.php', '')" >Добавить</button>
-<button onclick="submitForm('delete', 'users.php', '')" >Удалить</button>
+<button onclick="submitForm('new', 'user.php', 'POST', '')" >Добавить</button>
+<button onclick="submitForm('delete', 'users.php', 'POST', '')" >Удалить</button>
 <?php } ?>
 </td>
 </tr>
