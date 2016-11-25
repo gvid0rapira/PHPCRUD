@@ -1,5 +1,15 @@
 <?php
 
+function getPDO() {
+    $config = parse_ini_file('../config.ini');
+    // Исключение обрабатывается выше
+    $PDO = new PDO('mysql:host=localhost;' .
+        'dbname=' . $config['schema'] . ';' .
+        'charset=UTF8',
+        $config['username'], $config['password']);
+    return $PDO;
+}
+
 function get_mysqli() {
 
     $config = parse_ini_file('../config.ini');

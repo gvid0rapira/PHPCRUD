@@ -85,7 +85,7 @@ include_once 'User.php';
 <h2>Пользователь</h2>
 <form action="user.php" method="POST">
 <input type="hidden" name="action" value="<?php echo htmlentities( $action ) ?>">
-<input type="hidden" name="id" value="<?php echo htmlentities( $id ) ?>">
+<input type="hidden" name="id" value="<?php echo htmlentities( $user->id ) ?>">
 <table>
 <tr>
 <td><label>Ф.И.О.</label></td><td><input type="text" name="fio" value="<?php echo htmlentities( $user->fio ) ?>" ></td>
