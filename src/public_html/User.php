@@ -60,6 +60,7 @@ class User {
     public static function findAllOrderBy($field = 'fio', $desc = 0) {
         $dbcon = getPDO(); 
         $sql = "select * from user order by " . $field;
+        settype($desc, 'integer');
         if($desc) $sql = $sql . " desc";
         $users = array();
         foreach ($dbcon->query($sql) as $row) {

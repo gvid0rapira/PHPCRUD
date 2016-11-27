@@ -33,21 +33,28 @@
     
     $action = strip_tags( $_REQUEST['action'] );
     if( $action == "delete" ) { //---------------------: Удаление
+
         User::deleteById( strip_tags( $_POST['id'] ));
         $users = User::findAllOrderBy('fio');
     } else if( $action == "filter" ) { //--------------: Фильтрация
+
         $filter_val = '';
         $filter_fld = strip_tags( $_GET['filter_fld'] );
-        if( $filter_fld == 'fio') {
-            $filter_val = strip_tags( $_GET['fio_filter'] ) . "%";
-        } else if ( $filter_fld == 'role') {
-            $filter_val = strip_tags( $_GET['role_filter'] ) . "%";
-        } else if ( $filter_fld == 'name') {
-            $filter_val = strip_tags( $_GET['name_filter'] ) . "%";
+        if ( validateField($filter_fld)) {
+            // Значение фильтра не валидируем, т.к. запрос к БД параметризован
+            // и скомпилирован.
+            if( $filter_fld == 'fio') {
+                $filter_val = strip_tags( $_GET['fio_filter'] ) . "%";
+            } else if ( $filter_fld == 'role') {
+                $filter_val = strip_tags( $_GET['role_filter'] ) . "%";
+            } else if ( $filter_fld == 'name') {
+                $filter_val = strip_tags( $_GET['name_filter'] ) . "%";
+            }
         } else {
             // Неизвестное имя поля. Выдать весь список.
             $filter_fld = '';
         }
+
         if( empty($filter_fld) ) {
             $users = User::findAllOrderBy('fio');
         } else {
@@ -56,18 +63,57 @@
     } else if( $action == "sort" ) { //----------------: Сортировка
         
         $orderby = strip_tags( $_GET['orderby'] );
-        $field = substr($orderby, 0, strlen($orderby) - 1);
-        $desc = 0 + substr($orderby, -1);
-        $users = User::findAllOrderBy($field, $desc);
-        if ($field == 'fio') {
-            $fioOrderBy = $field . ($desc ^ 1);
-        } else if ($field == 'role') {
-            $roleOrderBy = $field . ($desc ^ 1);
-        } else if ($field == 'name') {
-            $nameOrderBy = $field . ($desc ^ 1);
+        if ( validateOrderBy($orderby)) {
+            $field = substr($orderby, 0, strlen($orderby) - 1);
+            $desc = 0 + substr($orderby, -1);
+            $users = User::findAllOrderBy($field, $desc);
+            if ($field == 'fio') {
+                $fioOrderBy = $field . ($desc ^ 1);
+            } else if ($field == 'role') {
+                $roleOrderBy = $field . ($desc ^ 1);
+            } else if ($field == 'name') {
+                $nameOrderBy = $field . ($desc ^ 1);
+            }
+        } else {
+            $users = User::findAllOrderBy('fio');
         }
     } else { //----------------------------------------: По умолчанию
         $users = User::findAllOrderBy('fio');
+    }
+
+    /**
+     * Валидирует параметр orderby
+     */
+    function validateOrderBy($orderby) {
+
+        $field = substr($orderby, 0, strlen($orderby) - 1);
+        $desc = 0 + substr($orderby, -1); // результат - 0 для любого символа,
+                                          // кроме цифры, большей 0
+        
+        $descIsValid = false;
+        if ($desc === 0 || $desc === 1) {
+            $descIsValid = true;
+        }
+        
+        return validateField($field) & $descIsValid;
+    }
+
+    /**
+     * Валидирует имя поля, по которому возможна сортировка
+     * или фильтрация.
+     */
+    function validateField($field) {
+        $fields = array("fio", "role", "name");
+        
+        $fieldIsValid = false;
+        foreach ($fields as $val) {
+            if ($field == $val) {
+                $fieldIsValid = true;
+                break;
+            } 
+        }
+
+        return $fieldIsValid;
     }
 ?>
 
