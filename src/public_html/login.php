@@ -1,5 +1,5 @@
 <?php
-include_once 'User.php';
+require_once 'User.php';
 
 session_start();
 $nameErr = $passwordErr = $loginErr = '';
@@ -26,6 +26,7 @@ if (!($nameErr | $passwordErr)) {
 }
 ?>
 
+<!DOCTYPE html>
 <html>
 <head>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
