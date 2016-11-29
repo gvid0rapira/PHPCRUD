@@ -40,14 +40,15 @@ class User {
 
         $user = null;
         if ($stmt->execute()) {
-            $row = $stmt->fetch();
-            $user = new User();
-            $user->id = $row['id'];
-            $user->fio = $row['fio'];
-            $user->email = $row['email'];
-            $user->role = $row['role'];
-            $user->name = $row['name'];
-            $user->password = $row['password'];
+            if ($row = $stmt->fetch()) {
+                $user = new User();
+                $user->id = $row['id'];
+                $user->fio = $row['fio'];
+                $user->email = $row['email'];
+                $user->role = $row['role'];
+                $user->name = $row['name'];
+                $user->password = $row['password'];
+            }
         }
 
         $stmt = null;

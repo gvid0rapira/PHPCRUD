@@ -3,25 +3,29 @@ require_once 'User.php';
 
 session_start();
 $nameErr = $passwordErr = $loginErr = '';
-if (empty($_REQUEST['name'])) {
+if (empty($_POST['name'])) {
     $nameErr = 'Имя обязательно';
 }
-if (empty($_REQUEST['password'])) {
+if (empty($_POST['password'])) {
     $passwordErr = 'Пароль обязателен';
 }
 
 if (!($nameErr | $passwordErr)) {
-    $name = $_REQUEST['name'];
-    $password = $_REQUEST['password'];
+    $name = $_POST['name'];
+    $password = $_POST['password'];
     $user = User::findByName($name);
     if ($user) {
         if ( !($password == $user->password)) {
             $loginErr = 'Неверное имя или пароль';
+            error_log("Ошибка входа: name: " . $name
+            . ", password: " . $password);
         } else {
             $_SESSION['user'] = $user;
         } 
     } else {
         $loginErr = 'Неверное имя или пароль';
+        error_log("Ошибка входа: name: " . $name
+            . ", password: " . $password);
     }
 }
 ?>
