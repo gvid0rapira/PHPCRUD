@@ -8,7 +8,7 @@ if(empty($_SESSION['user'])) {
 }
 // TODO: Проверить ввод.
 $user = User::findById(strip_tags( $_REQUEST['id'] ));
-if(!isset($user)) {
+if(empty($user)) {
     // TODO: Информативно обработать ошибку
     $errMsg = 'Внутренняя ошибка ...';
     require 'error.php';
@@ -16,16 +16,21 @@ if(!isset($user)) {
 }
 ?>
 
+<!DOCTYPE html>
 <html>
 <head>
+<meta charset="utf-8"/>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <title>Профиль пользователя</title>
 </head>
 <body>
-<h1><?php echo htmlentities( $user->fio ) ?></h1>
+<div class="container">
+<h1><?= htmlentities($user->fio) ?></h1>
 <table>
-<tr><td>email:</td><td><?php echo htmlentities( $user->email ) ?></td></tr>
-<tr><td>роль:</td><td><?php echo htmlentities( $user->role ) ?></td></tr>
-<tr><td>пароль:</td><td><?php echo htmlentities( $user->password ) ?></td></tr>
+<tr><td>email:</td><td><?= htmlentities($user->email) ?></td></tr>
+<tr><td>роль:</td><td><?= htmlentities($user->role) ?></td></tr>
+<tr><td>пароль:</td><td><?= htmlentities($user->password) ?></td></tr>
 </table>
 <a href="users.php">Список сотрудников</a>
+</div>
 </body>

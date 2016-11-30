@@ -4,7 +4,7 @@ function getPDO() {
     $config = parse_ini_file('../config.ini');
     
     try {
-    $PDO = new PDO('mysql:host=localhost;' .
+        $PDO = new PDO('mysql:host=localhost;' .
         'dbname=' . $config['schema'] . ';' .
         'charset=UTF8',
         $config['username'], $config['password']);

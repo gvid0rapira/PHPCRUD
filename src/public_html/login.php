@@ -33,27 +33,39 @@ if (!($nameErr | $passwordErr)) {
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="utf-8"/>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <title>Log in</title>
 </head>
 <body>
-<?php if (isset($_SESSION['user'])) echo 'Вы вошли как ' . $_SESSION['user']->name;  ?>
-<h1>Log in</h1>
-<span><?php echo $loginErr; ?></span>
-<form action="login.php" method="POST">
-<table>
-<tr>
-<td><label>name</label></td>
-<td><input type="text" name="name" value="" >
-    <span><?php echo $nameErr ?></span></td>
-</tr><tr>
-<td><label>password</label></td>
-<td><input type="password" name="password" value="" >
-    <span><?php echo $passwordErr ?></span></td>
-</tr><tr>
-<td colspan="2"><input name="loginBtn" type="submit" value="Log in"></td>
-</tr>
-</table>
-</form>
+<div class="container">
+<?php if (isset($_SESSION['user'])): ?> 
+Вы вошли как <?= $_SESSION['user']->name ?> 
+<a href="logout.php"> log out</a>
 <a href="users.php">Список сотрудников</a>
+<?php endif; ?>
+<h1>Log in</h1>
+<span class="help-inline alert-danger"><?= $loginErr ?></span>
+<form class="form-horizontal" action="login.php" method="POST">
+<div class="form-group">
+<label class="col-sm-2 control-label">name</label>
+<div class="col-sm-10">
+<input type="text" class="form-control" name="name" value="" >
+    <span class="help-inline alert-danger"><?= $nameErr ?></span>
+</div>
+</div>
+<div class="form-group">
+<label class="col-sm-2 control-label">password</label>
+<div class="col-sm-10">
+<input type="password" class="form-control" name="password" value="" >
+    <span class="help-inline alert-danger"><?= $passwordErr ?></span>
+</div>
+</div>
+<div class="form-group">
+<div class="col-sm-offset-2 col-sm-10">
+<button type="submit" class="btn btn-default">Log in</button>
+</div>
+</div>
+</form>
+</div>
 </body>

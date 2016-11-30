@@ -147,29 +147,48 @@
 </script>
 </head>
 <body>
-<?php if (isset($_SESSION['user'])) echo 'Вы вошли как ' . $_SESSION['user']->name;  ?>
+<div class="container">
+<?php if (isset($_SESSION['user'])): ?> 
+Вы вошли как <?= $_SESSION['user']->name ?> 
 <a href="logout.php"> log out</a>
+<?php endif; ?>
 <h2>Список пользователей</h2>
-<form id = "userList" action="user.php" method="GET">
+<form id="userList" class="form-horizontal" action="user.php" method="GET">
 <input type="hidden" id = "actionHid" name="action" value="">
 <input type="hidden" id = "orderByHid" name="orderby" value="">
 <input type="hidden" id = "filterFldHid" name="filter_fld" value="">
-<table class="table">
+<table class="table table-condensed">
 <tr>
-<th>ID</th>
-<th><button 
-    onclick="submitForm('sort', 'users.php', 'GET', '<?php echo htmlentities( $fioOrderBy ) ?>')" >
-    Ф.И.О.</button><input type="text" name="fio_filter" style="width: 80px" >
-    <button onclick="submitFilter('fio')">F</button></th>
+<th>X</th>
+<th>
+    <button class="btn btn-default btn-sm"
+    onclick="submitForm('sort', 'users.php', 
+            'GET', '<?= htmlentities($fioOrderBy) ?>')" >
+    Ф.И.О.</button>
+    <input type="text" class="input-sm" name="fio_filter"
+        style="width: 80px;"> 
+    <button class="btn btn-default btn-sm" 
+        onclick="submitFilter('fio')">F</button>
+</th>
 <th>email</th>
-<th><button 
-    onclick="submitForm('sort', 'users.php', 'GET', '<?php echo htmlentities( $roleOrderBy ) ?>')" >
-    Роль</button><input type="text" name="role_filter" style="width: 80px" >
-    <button onclick="submitFilter('role')">F</button></th>
-<th><button 
-    onclick="submitForm('sort', 'users.php', 'GET', '<?php echo htmlentities( $nameOrderBy ) ?>')" >
-    name</button><input type="text" name="name_filter" style="width: 80px" >
-    <button onclick="submitFilter('name')">F</button></th>
+<th><button class="btn btn-default btn-sm"
+        onclick="submitForm('sort', 'users.php', 'GET', 
+            '<?= htmlentities($roleOrderBy) ?>')" >
+        Роль</button>
+    <input type="text" class="input-sm" name="role_filter" 
+        style="width: 80px" >
+    <button class="btn btn-default btn-sm" 
+        onclick="submitFilter('role')">F</button>
+</th>
+<th><button class="btn btn-default btn-sm"
+        onclick="submitForm('sort', 'users.php', 'GET', 
+            '<?= htmlentities($nameOrderBy) ?>')" >
+        name</button>
+    <input type="text" class="input-sm" name="name_filter" 
+        style="width: 80px" >
+    <button class="btn btn-default btn-sm" 
+        onclick="submitFilter('name')">F</button>
+</th>
 <th>password</th>
 </tr>
 
@@ -198,14 +217,21 @@
 
 <tr>
 <td colspan="2">
-<button onclick="submitForm('edit', 'user.php', 'POST', '')" >Редактировать</button>
-<?php if($_SESSION['user']->role == 'администратор') { ?>
-<button onclick="submitForm('new', 'user.php', 'POST', '')" >Добавить</button>
-<button onclick="submitForm('delete', 'users.php', 'POST', '')" >Удалить</button>
-<?php } ?>
+<button class="btn btn-default btn-sm" 
+    onclick="submitForm('edit', 'user.php', 'POST', '')" >
+    Редактировать</button>
+<?php if($_SESSION['user']->role == 'администратор'): ?>
+<button class="btn btn-default btn-sm" 
+    onclick="submitForm('new', 'user.php', 'POST', '')" >
+    Добавить</button>
+<button class="btn btn-default btn-sm" 
+    onclick="submitForm('delete', 'users.php', 'POST', '')" >
+    Удалить</button>
+<?php endif; ?>
 </td>
 </tr>
 </table>
 </form>
+</div>
 </body>
 </html>

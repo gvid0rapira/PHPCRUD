@@ -58,7 +58,7 @@ include_once 'User.php';
         $user->fio = strip_tags( $_POST["fio"] );
         $user->email = strip_tags( $_POST["email"] );
         if (!filter_var($user->email, FILTER_VALIDATE_EMAIL)) {
-            $emailErr = "Invalid email format";
+            $emailErr = "неверный формат email";
         }
         $user->name = strip_tags( $_POST["name"] );
         $user->role = strip_tags( $_POST["role"] );
@@ -81,33 +81,59 @@ include_once 'User.php';
 <title>Пользоветель</title>
 </head>
 <body>
+<div class="container">
 <a href="users.php">список пользователей</a>
 <h2>Пользователь</h2>
-<form action="user.php" method="POST">
-<input type="hidden" name="action" value="<?php echo htmlentities( $action ) ?>">
-<input type="hidden" name="id" value="<?php echo htmlentities( $user->id ) ?>">
-<table>
-<tr>
-<td><label>Ф.И.О.</label></td><td><input type="text" name="fio" value="<?php echo htmlentities( $user->fio ) ?>" ></td>
-</tr><tr>
-<td><label>email</label></td><td><input type="text" name="email" value="<?php echo htmlentities( $user->email ) ?>" ></td>
-</tr><tr>
-<td colspan="2"><span class="error"><?php echo htmlentities( $emailErr );?></span></td>
-</tr><tr>
-<td><label>Роль</label></td><td>
-<select name="role" required>
+<form class="form-horizontal" action="user.php" method="POST">
+<input type="hidden" name="action" 
+       value="<?= htmlentities($action) ?>">
+<input type="hidden" name="id" 
+       value="<?= htmlentities($user->id) ?>">
+<div class="form-group">
+<label class="col-sm-2 control-label">Ф.И.О.</label>
+<div class="col-sm-10">
+<input type="text" class="form-control" name="fio" 
+       value="<?= htmlentities($user->fio) ?>" >
+</div>
+</div>
+<div class="form-group <?php if ($emailErr) echo 'has-error' ?>">
+<label class="col-sm-2 control-label">email</label>
+<div class="col-sm-10">
+<input type="text" class="form-control" name="email" 
+       value="<?= htmlentities($user->email) ?>" >
+<span class="help-block">
+    <?= htmlentities($emailErr)?></span>
+</div>
+</div>
+<div class="form-group">
+<label class="col-sm-2 control-label">Роль</label>
+<div class="col-sm-10">
+<select class="form-control" name="role" required>
 <option value="администратор" <?php if($user->role =='администратор') echo 'selected'?>>администратор</option>
 <option value="пользователь" <?php if($user->role =='пользователь') echo 'selected'?>>пользователь</option>
 </select>
-</td>
-</tr><tr>
-<td><label>name</label></td><td><input type="text" name="name" value="<?php echo htmlentities( $user->name ) ?>" ></td>
-</tr><tr>
-<td><label>password</label></td><td><input type="password" name="password" value="<?php echo htmlentities( $user->password ) ?>" ></td>
-</tr><tr>
-<td colspan="2"><input name="saveBtn" type="submit" value="Сохранить"></td>
-</tr>
-</table>
+</div>
+</div>
+<div class="form-group">
+<label class="col-sm-2 control-label">name</label>
+<div class="col-sm-10">
+<input type="text" class="form-control" name="name" 
+       value="<?= htmlentities($user->name) ?>">
+</div>
+</div>
+<div class="form-group">
+<label class="col-sm-2 control-label">password</label>
+<div class="col-sm-10">
+<input type="password" class="form-control" name="password" 
+       value="<?= htmlentities($user->password) ?>">
+</div>
+</div>
+<div class="form-group">
+<div class="col-sm-offset-2 col-sm-10">
+<button type="submit" class="btn btn-default">Сохранить</button>
+</div>
+</div>
 </form>
+</div>
 </body>
 </html>
