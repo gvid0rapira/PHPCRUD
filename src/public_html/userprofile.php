@@ -20,17 +20,18 @@ if(empty($user)) {
 <html>
 <head>
 <meta charset="utf-8"/>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" 
+    href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <title>Профиль пользователя</title>
 </head>
 <body>
 <div class="container">
+<a href="users.php">Список пользователей</a>
 <h1><?= htmlentities($user->fio) ?></h1>
 <table>
 <tr><td>email:</td><td><?= htmlentities($user->email) ?></td></tr>
 <tr><td>роль:</td><td><?= htmlentities($user->role) ?></td></tr>
 <tr><td>пароль:</td><td><?= htmlentities($user->password) ?></td></tr>
 </table>
-<a href="users.php">Список сотрудников</a>
 </div>
 </body>

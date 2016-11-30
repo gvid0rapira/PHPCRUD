@@ -42,7 +42,7 @@ if (!($nameErr | $passwordErr)) {
 <?php if (isset($_SESSION['user'])): ?> 
 Вы вошли как <?= $_SESSION['user']->name ?> 
 <a href="logout.php"> log out</a>
-<a href="users.php">Список сотрудников</a>
+<a href="users.php">Список пользователей</a>
 <?php endif; ?>
 <h1>Log in</h1>
 <span class="help-inline alert-danger"><?= $loginErr ?></span>
